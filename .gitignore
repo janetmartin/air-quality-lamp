@@ -1,5 +1,9 @@
 # Created by .ignore support plugin (hsz.mobi)
-constants.py
 notes.txt
 __pycache__/
 .idea/
+constants.py
+blinkatest.py
+notes2.txt
+neopixel_test.py
+!/neopixel_test.py
