@@ -1,45 +1,34 @@
-# Air Quality Lamp
-# A personal project
-
-# data from http://waqi.info/
-# description: a python script to check the local air quality index (AQI) and set the colour of a string of WS2812B LEDs
-
-# import modules
 import requests
-import json
 
-# import API url and key
-import constants
+# import api key from client-side file
+from constants import my_api_read_key
+# To use your API key in this file, comment out the line above, and uncomment the line below.
+# my_api_read_key = 'YOU API KEY HERE'
 
-# GET DATA
-response = requests.get(constants.API_url)  # connect to api url and get response object
-resp_json = json.loads(response.text)  # loads json response object as a Python dictionary
-# print(type(resp_json)) #uncomment to check type
-aqi = resp_json['data']['aqi']  # return key value for air quality index (aqi)
-print('The current Air Quality Index is:', aqi)  # print aqi
+# STEP 1: function to send get request to PurpleAir
+def getSensorData(sensor_index):
+    # my_url is assigned the URL we are going to send our request to.
+    my_url = ('https://api.purpleair.com/v1/sensors/' + str(sensor_index))
 
-# SCALE: World Air Quality Index Rating Scale
-# air quality scale from WAQI
-# 0 - 50 Good (green)
-# 51 - 100 Moderate (yellow)
-# 101 - 150 Unhealthy for Sensitive Groups (orange)
-# 151 - 200 Unhealthy (red)
-# 201 - 300 Very Unhealthy (purple)
-# 300+ Hazardous (burgundy)
+    # my_headers is assigned the context of our request we want to make. In this case
+    # we will pass through our API read key using the variable created above.
+    my_headers = {'X-API-Key': my_api_read_key}
 
-# logic based on value of aqi
-if aqi in range(0, 51):
-    print('The air quality is good.')
-elif aqi in range(51, 101):
-    print('The air quality is moderate.')
-elif aqi in range(101, 150):
-    print('The air quality is unhealthy for sensitive groups.')
-elif aqi in range(151, 200):
-    print('The air quality is unhealthy.')
-elif aqi in range(200, 301):
-    print('The air quality is very unhealthy.')
-else:
-    print('The air quality is hazardous.')
+    # This line creates and sends the request and then assigns its response to the
+    # variable, r.
+    response = requests.get(my_url, headers=my_headers)
 
-# Next: code to light up WS2812b string running of pizero data pin
-# Reminder re: setup https://core-electronics.com.au/guides/ws2812-addressable-leds-raspberry-pi-quickstart-guide/
+    # We then return the response we received.
+    if response.status_code == 200:
+        print('Success!')
+    elif response.status_code == 404:
+        print('Not Found.')
+    print(response.text)
+    return response
+
+# STEP 2: function to calculate AQI
+# STEP 3: function to control leds
+
+# EXAMPLE:See map for locations https://map.purpleair.com/ and retrieve station # from URLS
+getSensorData(129299) #this is the number of the station in George Wainborn Park, Vancouver, BC
+
