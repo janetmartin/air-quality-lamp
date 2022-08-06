@@ -11,6 +11,7 @@ from constants import my_api_read_key
 # STEP 1: function to send get request to PurpleAir
 # Note: the PurpleAir Map uses the 10minute PM2.5 average to calculate AQI, not the point value.
 
+
 def get_sensor_data(sensor_index):
 
     # send data request
@@ -25,14 +26,12 @@ def get_sensor_data(sensor_index):
         print('Not Found.')
 
     # load response as Python object
-    pm = json.loads(response.text)['sensor']['stats']['pm2.5_10minute']
-
+    response = json.loads(response.text)['sensor']['stats']['pm2.5_10minute']
+    return response
     #check if data is valid valueS
 
-    return pm
-
 # check that pm is a valid reading
-def validate_pm():
+def validate_pm(pm):
     if math.isnan(pm):
         return "-"
     elif pm == 'undefined':
@@ -95,8 +94,8 @@ def aqi_ranking(aqi):
 
 # VALUE FOR SELECTED SENSOR STATION
 # Enter the desired station number from map.purpleair.com
-pm = get_sensor_data(12999)
+pm = get_sensor_data(129299)
 aqi= aqi(pm)
-print('The 10-minute average particulate value in George Waiborn Park is: ' + str(pm))
+print('The 10-minute average particulate value in George Waiborn Park is: ' + str(pm) + ' ug/m^3')
 print('The current air quality index is: ' + str(aqi))
 report= aqi_ranking(aqi)
